@@ -1,0 +1,139 @@
+--2020.11.23,3차수업(1)
+
+숫자형함수  roundm trunc 자주씀
+문자형함수 substr 자주씀
+
+select SYSDATE from dual;
+
+concat은 문자 2개만 합칠수있음 3개이상 x
+instr 칼럼 위치찾는 함수
+
+quiz4 month between 이용
+
+--3차수업(2)
+
+SELECT SYSDATE FROM DUAL;
+
+
+
+--3차수업(3)
+
+--문제1
+SELECT (((TO_NUMBER(TO_CHAR (SYSDATE,'YYYY')) -1) *365),
+        TO_NUMBER(TO_CHAR(SYSDATE,'DDD')))
+FROM DUAL;
+
+---------------------------------------------------
+-----------------------------------------------
+--2020.11.23 SQL 복습
+
+SELECT ABS(-7) 절대값1, ABS(0) 절대값2, ABS(7.8) 절대값3 FROM DUAL;
+SELECT CEIL(7.6), FLOOR(7.6) FROM DUAL;
+SELECT EXP(5),LN(148.4131591025739382),LOG(10,10000) FROM DUAL;
+SELECT EXP(LN(5)) FROM DUAL;
+SELECT MOD(17,3),SIGN(-19), SIGN(0) FROM DUAL;
+SELECT POWER(2,3),SQRT(3) FROM DUAL;
+SELECT ROUND(3.545,2),ROUND(3.545,1),TRUNC(3.545,1) FROM DUAL;
+--CONCAT 2개만 가능 3개이상은 X
+SELECT CONCAT('A','B'),'A'||'B'||'C' FROM DUAL;
+SELECT INITCAP('abc'),UPPER('abc'),LOWER('A나bC'),INITCAP('홍gildong')
+FROM DUAL;
+SELECT * FROM EMPLOYEES WHERE FIRST_NAME='STEVEN';
+
+SELECT * FROM EMPLOYEES WHERE UPPER(first_name) = 'STEVEN';
+--PAD(받을문자,문자의총자릿수,추가할문자)
+SELECT LPAD('SQL',5,'*'),RPAD('SQL',5,'*') FROM DUAL;
+
+SELECT employee_id, 
+       phone_number,
+       lpad(phone_number,20,' ')phone_number2 from employees
+order by 1;       
+--trim (데이터,지울데이터)
+select ltrim('**SQL**','*'),rtrim('**sql**','*') from dual;
+
+select substr('abcdefg',1,2)firsts,
+       substr('abcdefg',0,2)SECONDS,
+       substr('abcdefg',3,2)thirds,
+       substr('abcdefg',3)fourths,
+       substr('abcdefg',-3)fifths,
+       substr('abcdefg',-3,2)sixths
+from dual;       
+
+--TRIM 양쪽공백제거,ASCII 아스키코드넘버,LENGTH 글자수 , LENGTHB 바이트수
+SELECT TRIM(' AB C D '),ASCII('a'),LENGTH('A B C'),LENGTHB('A B 강')
+FROM DUAL;
+
+SELECT REPLACE ('산은 산이요 물은 물이다.','산','언덕') 
+FROM DUAL;
+
+SELECT TRIM(' ABC D '), REPLACE(' AB C D ',' ','')
+FROM DUAL;
+--INSTR 
+SELECT INSTR('ABCAVCABC','C'),
+       INSTR('ABCABCABC','c'),
+       INSTR('ABCABCABC','C',2),
+       INSTR('ABCABCABC','C',2,2)
+FROM DUAL;
+
+SELECT SYSDATE FROM DUAL;
+
+SELECT ADD_MONTHS(SYSDATE,1) DAY1,
+       ADD_MONTHS(SYSDATE,-1) DAY2,
+       ADD_MONTHS(SYSDATE, 0) DAY3
+FROM DUAL;
+
+SELECT SYSDATE +31 DAY1,
+       SYSDATE -31 DAY2,
+       MONTHS_BETWEEN(SYSDATE+31,SYSDATE) DAY3,
+       MONTHS_BETWEEN(SYSDATE-31,SYSDATE) DAY4
+FROM DUAL;       
+
+SELECT LAST_DAY(SYSDATE) DAY1,
+       NEXT_DAY(SYSDATE,'금') DAY2
+FROM DUAL;
+
+SELECT SYSDATE
+,ROUND(SYSDATE,'YYYY')YEARS
+,ROUND(SYSDATE,'MM')MONTHS
+,ROUND(SYSDATE,'DD') DAYS
+,ROUND(SYSDATE,'HH24') HOURS24
+,ROUND(SYSDATE,'MI') MINUTES
+,ROUND(SYSDATE) DEFAULTS
+FROM DUAL;
+
+SELECT SYSDATE
+,TRUNC(SYSDATE,'YYYY')YEARS
+,TRUNC(SYSDATE,'MM') MONTHS
+,TRUNC(SYSDATE,'DD') DAYS
+,TRUNC(SYSDATE,'HH24') HOURS24
+,TRUNC(SYSDATE,'MI') MINUTES
+,TRUNC(SYSDATE) DEFAULTS
+FROM DUAL;
+
+SELECT SYSDATE,
+        SYSDATE +1 NEXTDAY,
+        SYSDATE -1 PREVIOUSDAY
+FROM DUAL;
+
+SELECT SYSDATE,
+        ADD_MONTHS(SYSDATE ,1)
+FROM DUAL;
+---------------------------------------------
+---------------------------------------------
+--Q2
+SELECT SUBSTR('Is this the real life? Is this just fantasy?',-8) firsts
+       ,substr('Is this the real life? Is this just fantasy?',37) seconds
+       ,substr('Is this the real life? Is this just fantasy?',37,8) thirds
+from dual;
+
+--Q3
+select sysdate
+,round(sysdate,'mm') mm
+from dual;
+
+--Q4
+
+select (months_between(sysdate, hire_date))/30 근무개월
+from employees where employee_id <=110;
+
+--Q5
