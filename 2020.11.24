@@ -1,0 +1,207 @@
+SELECT ABS(-7) 절대값1, ABS(0) 절대값2, ABS(7.8) 절대값3 FROM DUAL;
+SELECT CEIL(7.6), FLOOR(7.6) FROM DUAL;
+SELECT EXP(5),LN(148.4131591025739382),LOG(10,10000) FROM DUAL;
+SELECT EXP(LN(5)) FROM DUAL;
+SELECT MOD(17,3),SIGN(-19), SIGN(0) FROM DUAL;
+SELECT POWER(2,3),SQRT(3) FROM DUAL;
+SELECT ROUND(3.545,2),ROUND(3.545,1),TRUNC(3.545,1) FROM DUAL;
+--CONCAT 2개만 가능 3개이상은 X
+SELECT CONCAT('A','B'),'A'||'B'||'C' FROM DUAL;
+SELECT INITCAP('abc'),UPPER('abc'),LOWER('A나bC'),INITCAP('홍gildong')
+FROM DUAL;
+SELECT * FROM EMPLOYEES WHERE FIRST_NAME='STEVEN';
+
+SELECT * FROM EMPLOYEES WHERE UPPER(first_name) = 'STEVEN';
+--PAD(받을문자,문자의총자릿수,추가할문자)
+SELECT LPAD('SQL',5,'*'),RPAD('SQL',5,'*') FROM DUAL;
+
+SELECT employee_id, 
+       phone_number,
+       lpad(phone_number,20,' ')phone_number2 from employees
+order by 1;       
+--trim (데이터,지울데이터)
+select ltrim('**SQL**','*'),rtrim('**sql**','*') from dual;
+
+select substr('abcdefg',1,2)firsts,
+       substr('abcdefg',0,2)SECONDS,
+       substr('abcdefg',3,2)thirds,
+       substr('abcdefg',3)fourths,
+       substr('abcdefg',-3)fifths,
+       substr('abcdefg',-3,2)sixths
+from dual;       
+
+--TRIM 양쪽공백제거,ASCII 아스키코드넘버,LENGTH 글자수 , LENGTHB 바이트수
+SELECT TRIM(' AB C D '),ASCII('a'),LENGTH('A B C'),LENGTHB('A B 강')
+FROM DUAL;
+
+SELECT REPLACE ('산은 산이요 물은 물이다.','산','언덕') 
+FROM DUAL;
+
+SELECT TRIM(' ABC D '), REPLACE(' AB C D ',' ','')
+FROM DUAL;
+--INSTR 
+SELECT INSTR('ABCAVCABC','C'),
+       INSTR('ABCABCABC','c'),
+       INSTR('ABCABCABC','C',2),
+       INSTR('ABCABCABC','C',2,2)
+FROM DUAL;
+
+SELECT SYSDATE FROM DUAL;
+
+SELECT ADD_MONTHS(SYSDATE,1) DAY1,
+       ADD_MONTHS(SYSDATE,-1) DAY2,
+       ADD_MONTHS(SYSDATE, 0) DAY3
+FROM DUAL;
+
+SELECT SYSDATE +31 DAY1,
+       SYSDATE -31 DAY2,
+       MONTHS_BETWEEN(SYSDATE+31,SYSDATE) DAY3,
+       MONTHS_BETWEEN(SYSDATE-31,SYSDATE) DAY4
+FROM DUAL;       
+
+SELECT LAST_DAY(SYSDATE) DAY1,
+       NEXT_DAY(SYSDATE,'금') DAY2
+FROM DUAL;
+
+SELECT SYSDATE
+,ROUND(SYSDATE,'YYYY')YEARS
+,ROUND(SYSDATE,'MM')MONTHS
+,ROUND(SYSDATE,'DD') DAYS
+,ROUND(SYSDATE,'HH24') HOURS24
+,ROUND(SYSDATE,'MI') MINUTES
+,ROUND(SYSDATE) DEFAULTS
+FROM DUAL;
+
+SELECT SYSDATE
+,TRUNC(SYSDATE,'YYYY')YEARS
+,TRUNC(SYSDATE,'MM') MONTHS
+,TRUNC(SYSDATE,'DD') DAYS
+,TRUNC(SYSDATE,'HH24') HOURS24
+,TRUNC(SYSDATE,'MI') MINUTES
+,TRUNC(SYSDATE) DEFAULTS
+FROM DUAL;
+
+SELECT SYSDATE,
+        SYSDATE +1 NEXTDAY,
+        SYSDATE -1 PREVIOUSDAY
+FROM DUAL;
+
+SELECT SYSDATE,
+        ADD_MONTHS(SYSDATE ,1)
+FROM DUAL;
+---------------------------------------------
+---------------------------------------------
+--3-1
+--Q2
+SELECT SUBSTR('Is this the real life? Is this just fantasy?',-8) firsts
+       ,substr('Is this the real life? Is this just fantasy?',37) seconds
+       ,substr('Is this the real life? Is this just fantasy?',37,8) thirds
+from dual;
+
+--Q3
+select sysdate
+,round(sysdate,'mm') mm
+from dual;
+
+--Q4
+
+select (months_between(sysdate, hire_date)) 근무개월
+from employees where employee_id <=110;
+
+select hire_date from employees;
+--Q5
+select replace(phone_number,'.','-') from employees;
+
+--Q6
+select ltrim(street_address,'0,1,2,3,4,5,6,7,8,9,-, ') street_address2 
+from locations where location_id <= 2400;
+
+SELECT SUBSTR(STREET_ADDRESS,INSTR(STREET_ADDRESS,' ',1)+1)
+FROM LOCATIONS
+WHERE LOCATION_ID <= 2400;
+
+
+----------------------------------------------
+--3-2
+select to_number('12345.6789'),to_number(-12.0)
+from dual;
+
+select to_number(1234) from dual;
+
+select to_char(123456.78912),
+       to_char(123456.78912,'999,999.99999')
+from dual;       
+
+select to_char(sysdate) d1,
+       to_char(sysdate,'yyyy-mm-dd hh24:mi:ss') d2
+from dual;       
+
+select to_char(sysdate,'dd') d1,
+       to_char(sysdate,'day') d2,
+       to_char(sysdate,'ddd') d3
+from dual;
+
+--w:해당월의 몇주차인지?  , ww : 1월1일기준 몇주차인지?
+select sysdate d1,
+    to_char(sysdate,'w') d2,
+    to_char(sysdate,'ww') d3,
+    to_char(to_date('2020-11-24','yyyy-mm-dd'),'w') d4,
+    to_char(to_date('2020-11-24','yyyy-mm-dd'),'ww') d5
+from dual;    
+
+--nvl(A,B) A가 널값이면 B를 넣어라
+select nvl(null,'a'),nvl(null,1),nvl(2,3)
+from dual;
+
+--nvl2(A,B,C)A가 널값이면 C를 반환 , 아니면B를 반환 
+select nvl2(null,'a','b'),nvl2('a','b','c')
+from dual;
+
+--coalesce() :  처음으로 null값이 아닌값을 출력  
+select coalesce(null,null,null,'A',null,'B')
+from dual;
+
+--nullif(A,B) : A,B가 같으면 NULL, 그렇지않으면 A 반환
+select nullif(100,100),nullif(100,200)
+from dual;
+
+--DECODE
+-- 1값이 2이면 3을반환,4이면 5를 반환 1이면 7을 반환 모두아니면 9를 반환
+select decode(1,2,3,4,5,1,7,9) 
+      ,decode(1,2,3,4,5,6,7,9)
+      ,decode(1,2,3,4,5,6,7)--default값인 null을 반환
+from dual;      
+
+--Q.1
+select to_char(last_day(to_date('2019-08-20','yyyy-mm-dd')),'day') from dual;
+
+--Q.2
+select employee_id,first_name,last_name,salary,commission_pct
+    ,nvl2(commission_pct,salary+(salary*commission_pct),salary) real_salary
+from employees;
+
+--Q.3
+select employee_id,first_name,last_name,salary,commission_pct
+    ,decode(commission_pct,null,salary,salary+(salary*commission_pct)) real_salary
+from employees;    
+
+--Q4
+select   (2019*365) + to_char(to_date('2020-10-31','yyyy-mm-dd'),'ddd') from dual;
+
+--------------------------------------
+--------------------------------------
+--3-3
+--Q.1
+select round(1000000000000 / ((2019*365) + to_char(sysdate,'ddd')),0) from dual;
+
+--Q.2
+select to_date('2019-09-10','yyyy-mm-dd') +100 "100일"
+      ,to_date('2019-09-10','yyyy-mm-dd') +500 "500일"
+      ,to_date('2019-09-10','yyyy-mm-dd') +1000 "1000일"
+from dual;      
+
+--Q.4
+
+select to_char(last_day(to_date('2050-02-10','yyyy-mm-dd')),'day') from dual;
+
+--Q.05
