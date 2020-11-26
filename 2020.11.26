@@ -1,0 +1,24 @@
+select * 
+from covid19
+where 1=1 --1=1을 넣어서 일부분 지우면서 보고싶을때 에러가 안나게 해줌 
+and iso_code='KOR';
+
+-------
+-------
+--4-2,Q.3
+--rollup이용
+
+--Q.4
+-----------------------------------------
+-----------------------------------------
+--4-3 수업
+select * from employees;
+
+select round(avg(salary),0) 
+from employees
+where salary>=10000;
+
+select to_char(hire_date,'mm'), count(*) 
+from employees
+group by to_char(hire_date,'mm')
+order by 1;
