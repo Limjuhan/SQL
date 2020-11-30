@@ -1,0 +1,156 @@
+--2020.11.30 5차수업
+--5-1
+--외부조인 (+)기호는 오라클에서만 사용
+--외부조인후 내부조인을 하면 외부조인에서+한테이블에대한 효과가없다
+--5-2
+--select 활용해서 테이블 만들기
+create table emp_manager as
+select employee_id,manager_id
+from employees;
+--내려받은자료 설명(자전거파는회사자료임)
+--orders테이블 customer_id는 customers테이블과조인
+--shipped칼럼은 실제도착날짜
+--store_id는 product는 테이블과
+--staff_id는 staff테이블과
+--order_items는 order_id칼럼이있음, 이것은 orders테이블과 조인
+--order_items테이블은 order_id item_id 합쳐서 기본키
+--quiz6.orders테이블과 기타 테이블들 조인해서 데이터 가져오기
+--q.7 월별 그룹바이사용,
+--q.8 그룹바이에2개칼럼사용,분기는 Q,
+--Q9.헤더는 잘못나온것, 년도별하면됨.order,orders,? 3개테이블 조인
+--
+--5-3
+--순위가아니라순번구하는거라 공동조건이여도 1,2 매겨짐
+--rank는 동률이면 순위숫자가 같음
+--dense_rank는 공동순위다음 순위에 바로 다음숫자나옴 ex)공동2등 2명 다음순위는 3위(4위가 아닌)
+--
+-------------------------------------------
+-------------------------------------------
+2020.11.30 복습
+select a.employee_id,
+       a.first_name,
+       a.department_id,
+       b.department_name
+from employees a,
+     departments b
+where a.department_id=b.department_id
+order by a.department_id;
+
+select a.employee_id, a.first_name || ' ' || a.last_name emp_names,
+       b.job_title,
+       c.department_id,c.department_name
+from employees a,
+    jobs b,
+    departments c
+where a.job_id = b.job_id
+    and a.department_id = c.department_id
+order by 1;
+
+--외부조인
+select a.employee_id emp_id,
+a.first_name || ' ' || a.last_name emp_names,
+       a.department_id a_dept_id,
+       b.department_id b_dept_id,
+       b.department_name dept_name
+from employees a, departments b
+where a.department_id = b.department_id(+)
+order by a.department_id;
+
+--ANSI 조인
+
+select a.employee_id emp_id,
+       a.department_id a_dept_id,
+       b.department_id b_dept_id,
+       b.department_name dept_name
+from employees a
+inner join departments b
+on a.department_id = b.department_id
+order by a.employee_id;
+
+select a.employee_id emp_id,
+       a.department_id a_dept_id,
+       b.department_id b_dept_id,
+       b.department_name dept_name
+from employees a
+left outer join departments b
+on a.department_id = b.department_id
+order by 1;
+
+select a.employee_id emp_id,
+       a.department_id a_dept_id,
+       b.department_id b_dept_id,
+       b.department_name dept_name
+from employees a
+right outer join departments b
+on a.department_id = b.department_id
+order by a.employee_id, b.department_id;
+
+--ANSI Full outer join
+
+select a.employee_id emp_id,
+       a.department_id a_dept_id,
+       b.department_id b_dept_id,
+       b.department_name dept_name
+from employees a
+full outer join departments b
+on a.department_id = b.department_id
+order by a.employee_id,
+         b.department_id;
+
+--ansi 조인연습
+select a.employee_id,
+       a.first_name ||''||a.last_name emp_names,
+       a.job_id,
+       b.job_id,
+       b.job_title
+from employees a
+inner join jobs b
+on a.job_id = b.job_id
+order by 1;
+
+select a.employee_id,
+       a.first_name||''||a.last_name emp_names,
+       b.job_title,
+       c.department_id,
+       c.department_name       
+from employees a
+inner join jobs b
+on a.job_id = b.job_id
+inner join departments c
+on a.department_id = c.department_id
+order by 1;
+
+select a.employee_id,
+       a.first_name||''||a.last_name emp_names,
+       a.job_id,
+       b.job_id,
+       b.job_title,
+       c.department_id,
+       c.department_name
+from employees a
+inner join jobs b
+on a.job_id = b.job_id
+inner join departments c
+on a.department_id = c.department_id
+where b.job_id = 'SH_CLERK'
+order by 1;
+
+select a.employee_id,
+       a.first_name||''||a.last_name emp_names,
+       c.department_id,
+       c.department_name
+     --  d.location_id,
+     --  d.street_address,
+       --d.city
+from employees a
+left join departments c
+on a.department_id = c.department_id
+order by 1;
+inner join locations d
+on c.location_id = d.location_id
+order by 1;
+
+select * from locations;
+select * from departments;
+
+select a.employee_id,
