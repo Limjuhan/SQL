@@ -1,0 +1,163 @@
+--Quiz.1
+select * from jobs;
+select * from employees;
+
+select a.job_id
+      ,a.min_salary
+      ,a.max_salary
+      ,b.salary
+      ,b.employee_id
+      ,b.first_name||' '||b.last_name
+from jobs a
+inner join employees b
+     on a.job_id = b.job_id
+where 1=1
+and b.salary>a.max_salary
+or b.salary<a.min_salary
+order by 1;     
+--강현이 답, 밑에 where절에서 ()를 안해주면 job_id와 and조건이 한묶음, 
+--or는 그뒤 나머지를 구해라가 되기때문에
+--job_id=job_id 가 성립하지않는 결과값들이 나옴
+SELECT A.JOB_ID, B. SALARY, A.MIN_SALARY, A.MAX_SALARY ,B.LAST_NAME ||' '||B.FIRST_NAME EMP_NAME
+FROM JOBS A, EMPLOYEES B
+WHERE A.JOB_ID = B.JOB_ID AND
+(B.SALARY < A.MIN_SALARY OR
+B.SALARY > A.MAX_SALARY) ;
+
+--quiz2
+
+select a.employee_id
+        ,a.first_name||''||a.last_name emp_names
+        ,b.*
+from employees a,
+    job_history b
+where a.employee_id(+) = b.employee_id
+order by 1;
+
+select * from job_history
+order by 1;
+--a가 b의데이터를 전부 갖고있기때문에 내부조인과 b의외부조인결과가 같다
+
+--quiz.3
+select a.employee_id
+       ,a.first_name||''||a.last_name emp_name
+       ,a.manager_id
+       ,b.first_name||''||b.last_name manager_name
+from employees a
+    ,employees b
+where a.manager_id=b.employee_id
+order by 1;
+--매니저아이디가 없음
+
+--quiz.4
+select a.employee_id
+       ,a.first_name||''||a.last_name emp_name
+       ,a.manager_id
+       ,b.first_name||''||b.last_name manager_name
+from employees a
+left outer join employees b
+on a.manager_id=b.employee_id
+order by 1;
+
+--quiz.5
+
+select a.first_name
+      ,b.department_id
+      ,c.location_id
+      ,c.city
+from employees a
+inner join departments b
+    on a.department_id= b.department_id
+inner join locations c
+ on b.location_id = c.location_id
+where 1=1
+and a.first_name = 'David'
+and a.salary > 6000
+order by 1;
+
+--quiz.6
+select * from orders;
+select * from customers;
+SELECt * from stores;
+SELECt * from staffs;
+
+select a.order_id
+    ,a.order_date
+    ,b.first_name||' '||b.last_name customer_name
+    ,c.store_name
+    ,d.first_name||' '||d.last_name staff_name
+from orders a
+inner join customers b
+    on a.customer_id = b.customer_id
+inner join stores c
+    on a.store_id = c.store_id
+inner join staffs d
+    on a.staff_id = d.staff_id
+where 1=1 
+and a.order_date between to_date('20180101','yyyymmdd')
+and to_date('20180131','yyyymmdd')
+order by 2;
+
+--quiz.7
+select * from orders;
+select * from order_items;
+
+select to_char(a.order_date,'yyyy-mm') Months
+    ,sum(b.quantity*b.list_price) order_amt
+from orders a
+inner join order_items b
+    on a.order_id = b.order_id
+where 1=1
+and to_char(a.order_date,'yyyy')='2018'
+group by to_char(a.order_date,'yyyy-mm')
+order by 1;
+
+
+--q.8
+select to_char(a.order_date,'yyyy-q') Quarter
+      ,d.brand_name
+      ,sum(b.quantity*b.list_price) order_amt
+      
+from orders a
+inner join order_items b
+    on a.order_id = b.order_id
+inner join products c
+    on b.product_id = c.product_id
+inner join brands d
+    on c.brand_id = d.brand_id
+where 1=1
+and to_char(a.order_date,'yyyy')='2018'    
+group by to_char(a.order_date,'yyyy-q'),d.brand_name
+having sum(b.quantity * b.list_price) >= 10000
+order by 1;
+
+select * from products;
+select * from order_items;
+select * from brands;
+select * from orders;
+select * from stores;
+--quiz.9
+select to_char(a.order_date,'yyyy') QUARTER
+      ,c.store_name store_name
+      ,sum(b.quantity*b.list_price) order_amt
+from orders a
+inner join order_items b
+    on a.order_id = b.order_id
+inner join stores c
+    on a.store_id = c.store_id
+group by to_char(a.order_date,'yyyy'),c.store_name
+order by 1;    
+
+--5-3.q10
+
+select  a.department_id
+      ,b.department_name
+      ,a.first_name||''||a.last_name
+      ,a.hire_date
+      ,a.salary
+    ,sum(a.salary)over(partition by b.department_id
+                order by a.hire_date,a.salary) sum2
+from employees a
+inner join departments b
+    on a.department_id = b.department_id
+order by 2,4,5;
