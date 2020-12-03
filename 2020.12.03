@@ -1,0 +1,329 @@
+--6.서브쿼리,세미조인,안티조인
+
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        (select b.department_name
+        from departments b
+        where a.department_id=b.department_id)  dept_name
+from employees a
+order by 1;
+
+--스칼라서브쿼리에서 본체와 조인을 안해주면 부서명전체를 가져오므로 오류
+
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        (select b.department_name
+        from departments b
+        )  dept_name
+from employees a
+order by 1;
+
+--스칼라서브쿼리에서 select 다음 값에 2개이상시 두개의 칼럼을
+--가져오므로 오류
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        (select b.department_name,b.location_id
+        from departments b
+        where a.department_id=b.department_id)  dept_name
+from employees a
+order by 1;
+
+--job_title,job_id 두칼럼을 사용하지만, 문자열 연결연산자로
+--결합되어 최종반환값은 1개
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        (select b.job_title||'('||b.job_id||')'
+        from jobs b
+        where a.job_id=b.job_id)  job_names
+from employees a
+order by 1;
+
+--조인과 스칼라서브쿼리 비교
+--조인함수 사용시 178번사원 kimberly누락 but
+--서브쿼리에서는 조회됨
+--서브쿼리사용시a테이블 온전히 나오고 서브쿼리부분만 조인한 데이터가 나옴
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        b.department_name
+from employees a,
+    departments b
+where a.department_id = b.department_id
+order by 1;
+
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        (select b.department_name
+        from departments b
+        where a.department_id=b.department_id) dept_name
+from employees a
+order by 1;
+--left조인
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        b.department_name
+from employees a
+left join departments b
+on a.department_id = b.department_id
+order by 1;
+
+--스칼라서브쿼리2
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        (select b.department_name
+        from departments b
+        where a.department_id=b.department_id
+        ) dept_name,
+        (select d.country_name
+        from departments b,
+        locations c,
+        countries d
+        where a.department_id=b.department_id
+        and b.location_id = c.location_id
+        and c.country_id = d.country_id
+        ) country_name
+from employees a
+order by 1;
+
+--인라인뷰
+
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        c.dept_name
+from employees a,
+    (select b.department_id,
+            b.department_name dept_name
+        from departments b)c
+where a.department_id = c.department_id
+order by 1;
+
+--인라인뷰는 서브쿼리내에서 조인 불가능
+
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.department_id,
+        c.dept_name
+from employees a,
+    (select b.department_id,
+            b.department_name dept_name
+        from departments b
+        where a.department_id = b.department_id)c
+order by 1;
+
+--인라인뷰2
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        dept.department_name,
+        loc.street_address,
+        loc.city,
+        loc.country_name
+from employees a,
+(select * from departments b) dept,
+(select l.location_id,
+        l.street_address,
+        l.city,
+        c.country_name
+from locations l,
+    countries c
+where l.country_id = c.country_id) loc
+where a.department_id = dept.department_id
+and dept.location_id = loc.location_id
+order by 1;
+
+--인라인뷰3
+select a.department_id,
+        a.employee_id,
+        a.last_name,a.salary,
+        k.department_id second_dept_id,
+        k.avg_salary
+from employees a,
+(select b.department_id,round(AVG(b.salary),0) avg_salary
+    from employees b
+    group by b.department_id) k
+where a.department_id = k.department_id
+order by a.department_id;
+
+--중첩서브쿼리
+
+select * from departments where department_id 
+in (select department_id from employees);
+
+select * from departments a where exists
+(select 1 from employees b where a.department_id = b.department_id);
+----------
+select * from departments a
+where exists(select 'A' from employees b
+            where a.department_id = b.department_id
+            and b.salary > 10000);
+
+--중첩서브쿼리. 구문 이해가 안감(??????????????????????)
+select employee_id,
+        first_name||''||last_name emp_name,
+        job_id,
+        salary
+from employees 
+where (job_id,salary) in (select job_id,min_salary from jobs)
+order by 1;
+
+--중첩서브쿼리
+
+select last_name,
+        employee_id,
+        salary+NVL(commission_pct,0),
+        job_id,
+        e.department_id
+from employees e,
+    departments d
+where e.department_id = d.department_id
+and salary + NVL(commission_pct,0)
+    > (select salary+NVL(commission_pct,0)
+        from employees
+        where last_name = 'Pataballa')
+order by last_name,employee_id;    
+
+--중첩 서브쿼리
+select department_id,employee_id,last_name,salary
+from employees a
+where salary > (select AVG(salary)
+                    from employees b
+where a.department_id = b.department_id)--이부분이 어떻게 group by역할이되는건지..
+order by 1;                    
+
+--세미조인
+select * from departments
+where department_id IN(select department_id
+                        from employees);
+
+select * from departments a
+where exists (select 1 from employees b
+                where a.department_id=b.department_id);
+
+--안티조인
+--사원이속하지않은 부서만 추출
+select * from departments a
+where not exists (select 1 from employees b
+                where a.department_id=b.department_id);
+
+--job_history에없는 사원을추출
+select a.employee_id,
+        a.first_name||''||a.last_name
+from employees a
+where a.employee_id
+        NOT IN (select employee_id from job_history)
+order by 1;        
+
+------------------------
+--------------------------------------------------
+--Q.1
+--AVG_salary는job_id 별 사원의 평균급여
+--서브쿼리에서 굳이 셀프조인하는이유가??
+select a.employee_id,
+        a.first_name||''||a.last_name emp_name,
+        a.job_id,
+        a.salary,
+        (select AVG(b.salary) from employees b where a.job_id = b.job_id
+        group by b.job_id) avg_salary
+from employees a;        
+
+--Q.2
+select b.department_name,loc.street_address,loc.country_name
+from departments b,
+LATERAL
+(select l.location_id,l.street_address,c.country_name
+from locations l,
+    countries c
+    where 1=1
+    and l.country_id = c.country_id
+    and b.location_id = l.location_id) loc
+;    
+
+--Q.3
+select employee_id,
+        job_id,
+        salary
+from employees a
+where exists (select 1 from jobs b 
+                where 1=1  
+                and a.job_id = b.job_id
+                and a.salary=b.min_salary);
+----------------------------------------------
+select job_id from jobs
+intersect
+select job_id from employees;
+--교차검색시 더 다양한 직업들이있는데 왜 안나오는지???
+
+--Q.4
+
+select * 
+from departments a
+where not exists
+            (select 1 from employees b
+                where a.department_id=b.department_id);
+
+--Q.5
+select * from covid19;
+--스칼라로 실패
+select to_char(a.DATES,'YYYY-MM') MONTHS,
+a.continent,
+a.country,
+sum(a.new_cases) new_cases,
+c.continent_cases
+round(a.new_cases/c.continent_cases)*100,2) rates
+from covid19 a
+,(select sum(b.new_cases) continent_cases,
+        to_char(b.dates,'yyyy-mm') months
+from covid19 b
+group by to_char(b.dates,'yyyy-mm'),b.continent) c
+where a.months = c.months
+and a.continent = c.continent
+group by to_char(a.dates,'yyyy-mm'),a.continent,a.country
+order by 1;
+
+
+
+
+
+
+       
+       
+       
+       
+       
+       
+       
+            
+-----------------------------------------------------    
+----------------------------------------------------
+--Q.6
+--왜 썸하고  NVL하는지? NVL하고 썸해야되는게 아닌지??
+select * from covid19;
+
+            
+select to_char(dates,'mm') months,
+sum(nvl(new_tests,0)) 검사수,
+sum(new_cases) 확진자수,
+(nvl(sum(new_cases),0)/nvl(sum(new_tests),0)100 확진율
+from covid19
+where 1=1 
+and iso_code='kor'
+and to_char(dates,'yyyy')='2020'
+group by to_char(dates,'mm')
+order by 1;
+            
+         
+            
+            
+            
+            
+            
+            
+            
+            
