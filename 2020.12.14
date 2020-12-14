@@ -1,0 +1,79 @@
+--SQL 3차시강의 복습
+
+select instr('abababababab','a',1) from dual;
+
+select upper('홍길동')
+from dual;
+--
+select substr('is this the real life? is this just fantasy?',-8) from dual;
+--
+select (last_day(sysdate))+1 from dual;
+--
+select round(months_between(sysdate,hire_date),0) 
+from employees
+where employee_id <= 110;
+--
+select replace(phone_number,'.','-')
+from employees;
+--
+select substr(street_address,instr(street_address,' ')+1)
+from locations
+where location_id <= 2400;
+--
+
+select sysdate from dual;
+--
+select to_char(sysdate,'dd') d1,
+        to_char(sysdate,'day') d2,
+        to_char(sysdate,'ddd') d3
+from dual;        
+--
+select coalesce(null,null,'a',null)
+from dual;
+--
+
+select nullif(100,100),nullif(100,200)
+from dual;
+--
+
+select decode(1,2,3,4,5,1,7,9)
+        ,decode(1,2,3,4,5,6,7,9)
+        ,decode(1,2,3,4,5,6,7)
+from dual;        
+
+--
+
+select to_char(last_day(to_date('2019-08-20','yyyy-mm-dd')),'day')
+from dual;
+
+--
+select employee_id,first_name,last_name,salary,commission_pct,
+        salary+ salary * nvl(commission_pct,0) real_salary
+from employees;        
+--
+select employee_id,first_name,last_name,salary,commission_pct,
+        decode(commission_pct,null,salary,salary+salary*commission_pct)
+from employees;        
+
+select to_char(to_date('2020-10-31','yyyy-mm-dd'),'ddd')+(365*2020) 
+from dual;
+
+select to_date('2020-10-31','yyyy-mm-dd') - to_date('0001-01-01','yyyy-mm-dd')
+from dual;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
